@@ -9,10 +9,12 @@ use pocketmine\player\Player;
 
 /**
  * Single boss bar shared by every viewer of the currently running KOTH event.
+ *
+ * The boss actor ID is keyed per viewer (their own entity ID) rather than a
+ * shared fake ID: clients ignore TYPE_SHOW for an actor ID they have no
+ * knowledge of, but every client already knows its own player entity.
  */
 class KothBossBar {
-
-	private const BOSS_ACTOR_UNIQUE_ID = -1;
 
 	/** @var array<int, Player> */
 	private array $viewers = [];
@@ -32,7 +34,7 @@ class KothBossBar {
 		}
 		$this->viewers[$id] = $player;
 		$player->getNetworkSession()->sendDataPacket(BossEventPacket::show(
-			self::BOSS_ACTOR_UNIQUE_ID,
+			$player->getId(),
 			$this->lastTitle,
 			$this->lastPercent,
 			$this->lastColor
@@ -46,7 +48,7 @@ class KothBossBar {
 		}
 		unset($this->viewers[$id]);
 		if ($player->isConnected()) {
-			$player->getNetworkSession()->sendDataPacket(BossEventPacket::hide(self::BOSS_ACTOR_UNIQUE_ID));
+			$player->getNetworkSession()->sendDataPacket(BossEventPacket::hide($player->getId()));
 		}
 	}
 
@@ -66,18 +68,15 @@ class KothBossBar {
 			return;
 		}
 
-		$titlePacket = $titleChanged ? BossEventPacket::title(self::BOSS_ACTOR_UNIQUE_ID, $title) : null;
-		$healthPacket = $percentChanged ? BossEventPacket::healthPercent(self::BOSS_ACTOR_UNIQUE_ID, $percent) : null;
-		$propertiesPacket = $colorChanged ? BossEventPacket::properties(self::BOSS_ACTOR_UNIQUE_ID, $color) : null;
-
 		foreach ($this->viewers as $player) {
 			if (!$player->isConnected()) {
 				continue;
 			}
 			$session = $player->getNetworkSession();
-			if ($titlePacket !== null) $session->sendDataPacket($titlePacket);
-			if ($healthPacket !== null) $session->sendDataPacket($healthPacket);
-			if ($propertiesPacket !== null) $session->sendDataPacket($propertiesPacket);
+			$bossId = $player->getId();
+			if ($titleChanged) $session->sendDataPacket(BossEventPacket::title($bossId, $title));
+			if ($percentChanged) $session->sendDataPacket(BossEventPacket::healthPercent($bossId, $percent));
+			if ($colorChanged) $session->sendDataPacket(BossEventPacket::properties($bossId, $color));
 		}
 
 		$this->lastTitle = $title;

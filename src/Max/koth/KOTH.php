@@ -17,6 +17,7 @@ use Max\koth\Tasks\StartKothTask;
 
 use pocketmine\console\ConsoleCommandSender;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\TaskHandler;
@@ -49,6 +50,23 @@ class KOTH extends PluginBase implements Listener {
 	/** @var array<string, mixed> */
 	public array $END_WEBHOOK;
 
+	public bool $BOSSBAR_ENABLED;
+	public string $BOSSBAR_TITLE;
+	public int $BOSSBAR_CAPTURING_COLOR;
+	public int $BOSSBAR_IDLE_COLOR;
+
+	/** @var array<string, int> */
+	private const BOSSBAR_COLORS = [
+		"PINK" => BossBarColor::PINK,
+		"BLUE" => BossBarColor::BLUE,
+		"RED" => BossBarColor::RED,
+		"GREEN" => BossBarColor::GREEN,
+		"YELLOW" => BossBarColor::YELLOW,
+		"PURPLE" => BossBarColor::PURPLE,
+		"REBECCA_PURPLE" => BossBarColor::REBECCA_PURPLE,
+		"WHITE" => BossBarColor::WHITE,
+	];
+
 	public function onEnable() : void {
     self::$instance = $this;
 
@@ -75,6 +93,12 @@ class KOTH extends PluginBase implements Listener {
     $this->WEBHOOK_LINK = $config->get("webhook_link", "");
     $this->START_WEBHOOK = $config->get("start_webhook", []);
     $this->END_WEBHOOK = $config->get("end_webhook", []);
+
+    $bossBarConfig = $config->get("bossbar", []);
+    $this->BOSSBAR_ENABLED = (bool) ($bossBarConfig["enabled"] ?? true);
+    $this->BOSSBAR_TITLE = (string) ($bossBarConfig["title"] ?? "§bKOTH: §c{ARENA_NAME} §r§7- §bTime: §c{TIME} §r§7- §bKing: §c{KING}");
+    $this->BOSSBAR_CAPTURING_COLOR = $this->parseBossBarColor($bossBarConfig["capturing_color"] ?? "GREEN", BossBarColor::GREEN);
+    $this->BOSSBAR_IDLE_COLOR = $this->parseBossBarColor($bossBarConfig["idle_color"] ?? "WHITE", BossBarColor::WHITE);
 
     $this->current = null;
     $this->task = null;
@@ -117,6 +141,17 @@ class KOTH extends PluginBase implements Listener {
 		$this->bossBar?->removePlayer($event->getPlayer());
 	}
 
+	public function onPlayerJoin(PlayerJoinEvent $event) : void {
+		$this->bossBar?->addPlayer($event->getPlayer());
+	}
+
+	private function parseBossBarColor(mixed $value, int $default) : int {
+		if (!is_string($value)) {
+			return $default;
+		}
+		return self::BOSSBAR_COLORS[strtoupper($value)] ?? $default;
+	}
+
 
 	public static function getInstance() : KOTH {
 		return self::$instance;
@@ -140,7 +175,12 @@ class KOTH extends PluginBase implements Listener {
 
 	public function startKoth(Arena $arena) : string {
 		if ($this->task !== null) return "§7[§bKOTH§7] §cKOTH already running";
-		$this->bossBar = new KothBossBar(BossBarColor::WHITE);
+		if ($this->BOSSBAR_ENABLED) {
+			$this->bossBar = new KothBossBar($this->BOSSBAR_IDLE_COLOR);
+			foreach ($this->getServer()->getOnlinePlayers() as $player) {
+				$this->bossBar->addPlayer($player);
+			}
+		}
 		$this->task = $this->getScheduler()->scheduleRepeatingTask(new KothTask($this, $arena), $this->TASK_DELAY);
 		$this->current = $arena;
 		$arenaName = $arena->getName();

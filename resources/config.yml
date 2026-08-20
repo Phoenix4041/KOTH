@@ -1,5 +1,5 @@
 ---
-#Ticks between each bossbar update:
+#Ticks between each bossbar/capture update:
 update_delay: 2
 
 #The time (IN SECONDS) to capture KOTH:
@@ -7,6 +7,21 @@ capture_time: 300
 
 #Should the plugin display KOTH information above the hotbar (bottom of screen) (on/off):
 hotbar_popups: off
+
+#The boss bar shown at the top of the screen while a KOTH event is running.
+bossbar:
+  #Whether the boss bar should be shown at all (on/off):
+  enabled: on
+
+  #Text shown on the boss bar. Placeholders: {ARENA_NAME}, {TIME}, {KING}
+  title: "§bKOTH: §c{ARENA_NAME} §r§7- §bTime: §c{TIME} §r§7- §bKing: §c{KING}"
+
+  #Boss bar color while a player is capturing the hill.
+  #One of: PINK, BLUE, RED, GREEN, YELLOW, PURPLE, REBECCA_PURPLE, WHITE
+  capturing_color: GREEN
+
+  #Boss bar color while nobody is capturing the hill:
+  idle_color: WHITE
 
 #The commands that will be executed when the KOTH event has ended, {PLAYER} will be replaced with the name of the winner:
 reward_commands:

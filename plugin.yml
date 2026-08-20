@@ -1,28 +1,42 @@
-name: KingOfTheHill
-main: Max\KingOfTheHill\KingOfTheHill
-version: 1.1.0
-api: 5.3.0
-softdepend: [ScoreHud]
-
+name: KOTH
+description: "Fix (KOTH) event to your server"
 author: ItsMax123
-website: "https://github.com/ItsMax123/KingOfTheHill"
+
+main: Max\koth\KOTH
+version: 2.0.0
+api: 5.0.0
 
 permissions:
-  kingofthehill.command.setup:
-    default: op
-    description: Allows usage of the create, delete, enable, disable, addreward, delreward, setspawn, delspawn, setpos1, setpos2, settime commands
-  kingofthehill.command.start:
-    default: op
-    description: Allows usage of the '/koth start' command
-  kingofthehill.command.stop:
-    default: op
-    description: Allows usage of the '/koth stop' command
-  kingofthehill.command.info:
+  maxkoth.command.koth.use:
+    description: Lets user use all koth commands.
     default: true
-    description: Allows usage of the '/koth info' command
-  kingofthehill.command.list:
+  maxkoth.command.koth.join:
+    description: Lets user use all koth commands.
     default: true
-    description: Allows usage of the '/koth list' command
-  kingofthehill.command.spawn:
-    default: true
-    description: Allows usage of the '/koth spawn' command
+  maxkoth.command.koth.create:
+    description: Lets user use all koth commands.
+    default: op
+  maxkoth.command.koth.delete:
+    description: Lets user use all koth commands.
+    default: op
+  maxkoth.command.koth.list:
+    description: Lets user use all koth commands.
+    default: op
+  maxkoth.command.koth.pos1:
+    description: Lets user use all koth commands.
+    default: op
+  maxkoth.command.koth.pos2:
+    description: Lets user use all koth commands.
+    default: op
+  maxkoth.command.koth.remove:
+    description: Lets user use all koth commands.
+    default: op
+  maxkoth.command.koth.setspawn:
+    description: Lets user use all koth commands.
+    default: op
+  maxkoth.command.koth.start:
+    description: Lets user use all koth commands.
+    default: op
+  maxkoth.command.koth.stop:
+    description: Lets user use all koth commands.
+    default: op

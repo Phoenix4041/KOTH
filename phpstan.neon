@@ -1,0 +1,11 @@
+parameters:
+    level: 8
+    paths:
+        - src/Max/koth
+    ignoreErrors:
+        - message: '#.*#'
+          path: src/Max/koth/libs/*
+    scanDirectories:
+        - vendor/pocketmine/pocketmine-mp/src
+        - vendor/pocketmine/pocketmine-mp/generated
+    treatPhpDocTypesAsCertain: false

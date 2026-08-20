@@ -3,7 +3,7 @@ description: "Fix (KOTH) event to your server"
 author: ItsMax123
 
 main: Max\koth\KOTH
-version: 2.0.0
+version: 2.1.0
 api: 5.0.0
 
 permissions:

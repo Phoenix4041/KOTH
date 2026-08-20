@@ -97,6 +97,7 @@ trait ArgumentableTrait{
 				"code" => BaseCommand::ERR_NO_ARGUMENTS,
 				"data" => []
 			];
+			return $return;
 		}
 		$offset = 0;
 		if(count($rawArgs) > 0){
